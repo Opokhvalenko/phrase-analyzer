@@ -1,0 +1,55 @@
+<section class="editor" aria-labelledby="editor-label">
+  <label id="editor-label" class="editor__label" for="editor">{{ text.label }}</label>
+  <textarea
+    #editor
+    id="editor"
+    class="editor__textarea"
+    rows="10"
+    [placeholder]="text.placeholder"
+    [value]="store.text()"
+    aria-describedby="selection-hint"
+    data-testid="editor"
+    (input)="onInput()"
+    (select)="syncSelection()"
+    (keyup)="syncSelection()"
+    (mouseup)="syncSelection()"
+    (keydown)="onKeydown($event)"
+  ></textarea>
+
+  <p id="selection-hint" class="editor__hint" data-testid="selection-hint">{{ selectionHint() }}</p>
+
+  <div class="editor__toolbar">
+    <button
+      type="button"
+      class="button button--primary"
+      [disabled]="!canFind()"
+      [attr.aria-keyshortcuts]="'Control+Enter Meta+Enter'"
+      aria-describedby="selection-hint"
+      data-testid="find-synonyms"
+      (click)="findSynonyms()"
+    >
+      {{ text.findSynonyms }}
+      <span class="button__shortcut" aria-hidden="true">{{ text.shortcut }}</span>
+    </button>
+    <button
+      type="button"
+      class="button"
+      [disabled]="!canCopy()"
+      data-testid="copy"
+      (click)="copy()"
+    >
+      {{ text.copy }}
+    </button>
+    @if (store.canUndo()) {
+      <button type="button" class="button" data-testid="undo" (click)="undo()">
+        {{ text.undo }}
+      </button>
+    }
+  </div>
+
+  <p class="editor__feedback" role="status" data-testid="feedback">{{ feedback() }}</p>
+
+  <app-text-stats [text]="store.text()" />
+</section>
+
+<app-synonym-panel [state]="store.synonyms()" (pick)="replaceWith($event)" (retry)="retry()" />

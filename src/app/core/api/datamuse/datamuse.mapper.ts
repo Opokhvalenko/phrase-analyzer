@@ -2,6 +2,13 @@ import type { Synonym } from '../../../shared/models/synonym';
 import { normalizePhrase } from '../../../shared/text/normalize-phrase';
 import type { DatamuseWordDto } from './datamuse.dto';
 
+/**
+ * Datamuse marks the first "filler" result (nearest neighbours by vector, often unrelated:
+ * "very happy" → "agony", "cosmetic") with this tag; everything from it on is filler.
+ * Observed behaviour, not a documented contract — without the tag the list is kept as is.
+ */
+const BACKFILL_TAG_PREFIX = 'results_type:backfill';
+
 export class InvalidDatamuseResponseError extends Error {
   constructor() {
     super('Datamuse response is not an array');
@@ -11,7 +18,7 @@ export class InvalidDatamuseResponseError extends Error {
 
 /**
  * Validates the raw response and maps it to synonyms of `phrase`:
- * drops malformed items, the phrase itself and duplicates; keeps Datamuse's order (best first).
+ * drops malformed items, the phrase itself, duplicates and the backfill tail; keeps Datamuse's order (best first).
  */
 export function toSynonyms(response: unknown, phrase: string, limit: number): Synonym[] {
   if (!Array.isArray(response)) {
@@ -24,6 +31,9 @@ export function toSynonyms(response: unknown, phrase: string, limit: number): Sy
   for (const item of response) {
     if (!isDatamuseWord(item)) {
       continue;
+    }
+    if (isBackfill(item)) {
+      break;
     }
     const text = item.word.trim();
     const key = normalizePhrase(text);
@@ -38,6 +48,10 @@ export function toSynonyms(response: unknown, phrase: string, limit: number): Sy
   }
 
   return synonyms;
+}
+
+function isBackfill(item: DatamuseWordDto): boolean {
+  return item.tags?.some((tag) => tag.startsWith(BACKFILL_TAG_PREFIX)) ?? false;
 }
 
 function isDatamuseWord(item: unknown): item is DatamuseWordDto {

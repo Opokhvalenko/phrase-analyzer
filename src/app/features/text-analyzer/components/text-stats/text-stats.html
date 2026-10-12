@@ -1,0 +1,16 @@
+<dl class="stats">
+  <div class="stats__item">
+    <dt class="stats__label">{{ labels.characters }}</dt>
+    <dd class="stats__value" data-testid="stat-characters">{{ characters() }}</dd>
+  </div>
+  <div class="stats__item">
+    <dt class="stats__label">{{ labels.charactersWithoutSpaces }}</dt>
+    <dd class="stats__value" data-testid="stat-characters-without-spaces">
+      {{ charactersWithoutSpaces() }}
+    </dd>
+  </div>
+  <div class="stats__item">
+    <dt class="stats__label">{{ labels.words }}</dt>
+    <dd class="stats__value" data-testid="stat-words">{{ words() }}</dd>
+  </div>
+</dl>

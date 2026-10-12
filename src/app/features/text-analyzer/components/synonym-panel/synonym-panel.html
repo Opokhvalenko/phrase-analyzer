@@ -1,0 +1,27 @@
+<section class="panel" aria-labelledby="synonyms-title" [attr.aria-busy]="state().status === 'loading'">
+  <h2 id="synonyms-title" class="panel__title">{{ text.title }}</h2>
+
+  <p
+    class="panel__status"
+    [class.panel__status--error]="state().status === 'error'"
+    role="status"
+    data-testid="synonyms-status"
+  >
+    {{ statusMessage() }}
+  </p>
+
+  @if (state().status === 'error') {
+    <button type="button" class="button" (click)="retry.emit()">{{ text.retry }}</button>
+  }
+
+  @if (synonyms().length > 0) {
+    <p class="panel__hint" id="synonyms-replace-label">{{ replaceLabel() }}</p>
+    <ul class="panel__list" aria-labelledby="synonyms-replace-label">
+      @for (synonym of synonyms(); track synonym.text) {
+        <li>
+          <button type="button" class="chip" (click)="pick.emit(synonym)">{{ synonym.text }}</button>
+        </li>
+      }
+    </ul>
+  }
+</section>

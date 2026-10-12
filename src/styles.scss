@@ -5,7 +5,11 @@
   --color-text-muted: #5b5b66;
   --color-border: #d6d6de;
   --color-accent: #3451d1;
+  --color-accent-soft: #eef1fd;
+  --color-accent-contrast: #ffffff;
+  --color-error: #b3261e;
   --color-focus: #3451d1;
+  --target-size: 44px;
   --radius: 8px;
   --space-1: 4px;
   --space-2: 8px;
@@ -42,5 +46,45 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--target-size);
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: var(--color-accent);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &--primary {
+    color: var(--color-accent-contrast);
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  &__shortcut {
+    font-size: 0.75rem;
+    font-weight: 400;
+    opacity: 0.8;
+
+    @media (pointer: coarse) {
+      display: none;
+    }
   }
 }

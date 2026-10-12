@@ -31,6 +31,28 @@ describe('toSynonyms', () => {
     expect(toSynonyms(response, 'happy', LIMIT)).toHaveLength(LIMIT);
   });
 
+  it('should cut the list at the first backfill result (unrelated filler words)', () => {
+    const response = [
+      { word: 'elated', tags: ['syn', 'adj', 'results_type:primary_external'] },
+      { word: 'overjoyed', tags: ['syn', 'adj'] },
+      { word: 'elation', tags: ['results_type:backfill_vector_resultbased', 'n'] },
+      { word: 'agony', tags: ['n'] },
+    ];
+    expect(toSynonyms(response, 'very happy', LIMIT)).toEqual([
+      { text: 'elated' },
+      { text: 'overjoyed' },
+    ]);
+  });
+
+  it('should keep every result when there is no backfill marker', () => {
+    const response = [
+      { word: 'pleased', tags: ['syn'] },
+      { word: 'glad' },
+      { word: 'content', tags: [] },
+    ];
+    expect(toSynonyms(response, 'happy', LIMIT)).toHaveLength(3);
+  });
+
   it('should return an empty list when Datamuse finds nothing', () => {
     expect(toSynonyms([], 'xqzwv', LIMIT)).toEqual([]);
   });
