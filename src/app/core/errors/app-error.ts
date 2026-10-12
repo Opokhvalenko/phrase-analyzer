@@ -19,7 +19,7 @@ export function isAppError(error: unknown): error is AppError {
     'kind' in error &&
     'message' in error &&
     typeof error.kind === 'string' &&
-    error.kind in UI_TEXT.errors &&
+    Object.hasOwn(UI_TEXT.errors, error.kind) &&
     typeof error.message === 'string'
   );
 }
