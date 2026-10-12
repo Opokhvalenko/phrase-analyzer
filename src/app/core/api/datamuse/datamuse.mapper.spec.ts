@@ -26,6 +26,15 @@ describe('toSynonyms', () => {
     expect(toSynonyms(response, 'happy', LIMIT)).toEqual([{ text: 'glad' }]);
   });
 
+  it('should skip items whose tags are not a list of strings instead of failing', () => {
+    const response = [
+      { word: 'odd', tags: 'syn' },
+      { word: 'odder', tags: [1] },
+      { word: 'glad', tags: ['syn'] },
+    ];
+    expect(toSynonyms(response, 'happy', LIMIT)).toEqual([{ text: 'glad' }]);
+  });
+
   it('should return at most `limit` synonyms', () => {
     const response = Array.from({ length: 30 }, (_, index) => ({ word: `word${index}` }));
     expect(toSynonyms(response, 'happy', LIMIT)).toHaveLength(LIMIT);

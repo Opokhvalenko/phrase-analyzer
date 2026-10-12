@@ -55,7 +55,17 @@ function isBackfill(item: DatamuseWordDto): boolean {
 }
 
 function isDatamuseWord(item: unknown): item is DatamuseWordDto {
-  return (
-    typeof item === 'object' && item !== null && 'word' in item && typeof item.word === 'string'
-  );
+  if (
+    typeof item !== 'object' ||
+    item === null ||
+    !('word' in item) ||
+    typeof item.word !== 'string'
+  ) {
+    return false;
+  }
+  return !('tags' in item) || item.tags === undefined || isStringArray(item.tags);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((entry) => typeof entry === 'string');
 }
