@@ -14,7 +14,6 @@
     (select)="syncSelection()"
     (keyup)="syncSelection()"
     (mouseup)="syncSelection()"
-    (keydown)="onKeydown($event)"
   ></textarea>
 
   <p id="selection-hint" class="editor__hint" data-testid="selection-hint">{{ selectionHint() }}</p>

@@ -115,16 +115,52 @@ describe('TextAnalyzerPage', () => {
     expect(synonymButtons().map((button) => button.textContent?.trim())).toEqual(['glad']);
   });
 
+  function pressCtrlEnter(target: EventTarget, init: KeyboardEventInit = {}): KeyboardEvent {
+    const event = new KeyboardEvent('keydown', {
+      key: 'Enter',
+      ctrlKey: true,
+      bubbles: true,
+      cancelable: true,
+      ...init,
+    });
+    target.dispatchEvent(event);
+    return event;
+  }
+
   it('should look up with Ctrl+Enter and not insert a line break', async () => {
     await type('I am happy');
     await select('happy');
 
-    const event = new KeyboardEvent('keydown', { key: 'Enter', ctrlKey: true, cancelable: true });
-    editor().dispatchEvent(event);
+    const event = pressCtrlEnter(editor());
     await fixture.whenStable();
 
     expect(event.defaultPrevented).toBe(true);
     expect(synonymButtons()).toHaveLength(2);
+  });
+
+  it('should look up with Ctrl+Enter when focus is outside the textarea', async () => {
+    await type('I am happy');
+    await select('happy');
+
+    pressCtrlEnter(byTestId<HTMLButtonElement>('copy') as HTMLButtonElement);
+    await fixture.whenStable();
+
+    expect(synonymButtons()).toHaveLength(2);
+  });
+
+  it('should ignore a held-down Ctrl+Enter (auto-repeat)', async () => {
+    let calls = 0;
+    lookup = () => {
+      calls++;
+      return of([{ text: 'glad' }]);
+    };
+    await type('I am happy');
+    await select('happy');
+
+    pressCtrlEnter(editor(), { repeat: true });
+    await fixture.whenStable();
+
+    expect(calls).toBe(0);
   });
 
   it('should replace the selection, keep its case, select the new word and announce it', async () => {
