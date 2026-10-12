@@ -80,7 +80,7 @@ describe('TextAnalyzerPage', () => {
     await type('one two three four five six');
     await select('one two three four five six');
     expect(findButton().disabled).toBe(true);
-    expect(textOf('selection-hint')).toBe(UI_TEXT.selectionHint.tooLong(MAX_PHRASE_WORDS));
+    expect(textOf('selection-hint')).toBe(UI_TEXT.selectionHint.tooManyWords(MAX_PHRASE_WORDS));
   });
 
   it('should explain why a selection with too many characters cannot be looked up', async () => {

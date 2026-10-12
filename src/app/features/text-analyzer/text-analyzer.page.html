@@ -1,11 +1,11 @@
 <section class="editor">
-  <label class="editor__label" for="editor">{{ text.label }}</label>
+  <label class="editor__label" for="editor">{{ labels.label }}</label>
   <textarea
     #editor
     id="editor"
     class="editor__textarea"
     rows="6"
-    [placeholder]="text.placeholder"
+    [placeholder]="labels.placeholder"
     [value]="store.text()"
     aria-describedby="selection-hint"
     data-testid="editor"
@@ -29,8 +29,8 @@
       data-testid="find-synonyms"
       (click)="findSynonyms()"
     >
-      {{ text.findSynonyms }}
-      <span class="button__shortcut" aria-hidden="true">{{ text.shortcut }}</span>
+      {{ labels.findSynonyms }}
+      <span class="button__shortcut" aria-hidden="true">{{ labels.shortcut }}</span>
     </button>
     <button
       type="button"
@@ -39,11 +39,11 @@
       data-testid="copy"
       (click)="copy()"
     >
-      {{ text.copy }}
+      {{ labels.copy }}
     </button>
     @if (store.canUndo()) {
       <button type="button" class="button" data-testid="undo" (click)="undo()">
-        {{ text.undo }}
+        {{ labels.undo }}
       </button>
     }
   </div>

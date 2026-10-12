@@ -99,9 +99,12 @@ describe('normalizeSelection', () => {
     expect(normalizeSelection(text, 0, text.length).valid).toBe(true);
   });
 
-  it(`should be invalid with reason "too-long" when more than ${MAX_PHRASE_WORDS} words are selected`, () => {
+  it(`should be invalid with reason "too-many-words" when more than ${MAX_PHRASE_WORDS} words are selected`, () => {
     const text = 'one two three four five six';
-    expect(normalizeSelection(text, 0, text.length)).toEqual({ valid: false, reason: 'too-long' });
+    expect(normalizeSelection(text, 0, text.length)).toEqual({
+      valid: false,
+      reason: 'too-many-words',
+    });
   });
 
   it(`should accept a phrase of exactly ${MAX_PHRASE_LENGTH} characters`, () => {

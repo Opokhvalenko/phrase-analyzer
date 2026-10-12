@@ -16,7 +16,11 @@ export interface TextSelection {
   readonly text: string;
 }
 
-export type InvalidSelectionReason = 'empty' | 'no-letters' | 'too-long' | 'too-many-characters';
+export type InvalidSelectionReason =
+  | 'empty'
+  | 'no-letters'
+  | 'too-many-words'
+  | 'too-many-characters';
 
 export type SelectionCheck =
   | { readonly valid: true; readonly selection: TextSelection }
@@ -61,7 +65,7 @@ export function normalizeSelection(text: string, start: number, end: number): Se
     return { valid: false, reason: 'no-letters' };
   }
   if (touchedWords.length > MAX_PHRASE_WORDS) {
-    return { valid: false, reason: 'too-long' };
+    return { valid: false, reason: 'too-many-words' };
   }
   if (normalizePhrase(phrase).length > MAX_PHRASE_LENGTH) {
     return { valid: false, reason: 'too-many-characters' };
