@@ -6,14 +6,30 @@ Type or paste text, select a word or a short phrase, get synonyms from the [Data
 
 ![Phrase Analyzer: "very happy" is selected and four synonyms are offered](docs/screenshot.png)
 
+## Task requirements
+
+| Requirement from the brief | Where | Checked by |
+|---|---|---|
+| Text is entered in a textarea | `text-analyzer.page.html` | page test, e2e |
+| A separate button gets synonyms | **Find synonyms** (also `Ctrl / ⌘ + Enter`) | page test, e2e |
+| The selected word or phrase is sent to a public API (Datamuse) | `DatamuseClient`, `ml=` query | client tests with `HttpTestingController`, e2e |
+| The list of synonyms is shown | `SynonymPanel` | component tests, e2e |
+| Clicking a synonym replaces the selection in the textarea | `applyReplacement`, `TextAnalyzerStore.replaceWith` | unit, page test, e2e in 3 browsers |
+| Character count | `countCharacters` | unit, component, e2e |
+| Word count | `countWords` | unit, component, e2e |
+| A button copies the whole text | `ClipboardService`, **Copy text** | unit, page test, e2e |
+| Angular | Angular 21 | — |
+| Link to GitHub | this repository + [live demo](https://opokhvalenko.github.io/phrase-analyzer/) | — |
+
 ## Features
 
 - Character count (also without spaces) and word count, updated while you type
-- **Find synonyms** for the selected word or phrase (button or `Ctrl / ⌘ + Enter`)
+- **Find synonyms** for the selected word or phrase (button or `Ctrl / ⌘ + Enter` anywhere on the page)
 - Click a synonym to replace the selection; the original case is kept (`Happy` → `Pleased`, `HAPPY` → `PLEASED`)
 - After a replacement the new word stays selected, so you can look it up again; **Undo** reverts the last replacement
 - **Copy text** copies the whole text
-- Loading, empty and error states with a **Try again** button; works with the keyboard and screen readers
+- Loading, empty and error states with a **Try again** button
+- Fully usable from the keyboard; labels, descriptions and live regions for screen readers
 - Light and dark theme (follows the system setting); all colours pass WCAG AA contrast
 
 ## Getting started
@@ -84,7 +100,7 @@ e2e/                        Playwright tests, Datamuse mocked with page.route
 
 ## Tests
 
-- **156 unit and component tests.** Text helpers cover the edge cases above (empty text, emoji, Ukrainian, backwards selection, the 5-word and 100-character limits). The API client is tested with `HttpTestingController` (encoding, cache, every error type, timeout). The store is tested with a fake client to check cancellation, double clicks, retry, replace and undo.
+- **162 unit and component tests.** Text helpers cover the edge cases above (empty text, emoji, Ukrainian, backwards selection, the 5-word and 100-character limits). The API client is tested with `HttpTestingController` (encoding, cache, every error type, timeout). The store is tested with a fake client to check cancellation, double clicks, retry, replace and undo.
 - **11 e2e tests, each run in Chromium, Firefox and WebKit** with the API mocked. Text is selected with Shift+Arrow keys, like a user would. Running all three engines paid off: Firefox collapses a selection only after `mouseup`, so the app also listens to `selectionchange` on the textarea.
 - I checked that the tests fail when the logic breaks: I temporarily broke key lines (`switchMap` → `mergeMap`, no cache, no selection listeners…) and each change made at least one test fail.
 

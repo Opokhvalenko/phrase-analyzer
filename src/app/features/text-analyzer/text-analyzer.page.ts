@@ -28,6 +28,8 @@ export const FEEDBACK_DURATION_MS = 2000;
   templateUrl: './text-analyzer.page.html',
   styleUrl: './text-analyzer.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // Ctrl/⌘+Enter works wherever focus is (also on a synonym or the Copy button), matching aria-keyshortcuts.
+  host: { '(document:keydown)': 'onKeydown($event)' },
 })
 export class TextAnalyzerPage {
   protected readonly store = inject(TextAnalyzerStore);
@@ -74,7 +76,7 @@ export class TextAnalyzerPage {
   }
 
   protected onKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && !event.repeat) {
       event.preventDefault();
       this.store.findSynonyms();
     }
