@@ -1,9 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import {
-  countCharacters,
-  countCharactersWithoutSpaces,
-  countWords,
-} from '../../../../shared/text/text-stats';
+import { countCharacters, countWords } from '../../../../shared/text/text-stats';
 import { UI_TEXT } from '../../../../shared/ui-text';
 
 @Component({
@@ -17,8 +13,5 @@ export class TextStats {
 
   protected readonly labels = UI_TEXT.stats;
   protected readonly characters = computed(() => countCharacters(this.text()));
-  protected readonly charactersWithoutSpaces = computed(() =>
-    countCharactersWithoutSpaces(this.text()),
-  );
   protected readonly words = computed(() => countWords(this.text()));
 }

@@ -1,32 +1,35 @@
-import { countCharacters, countCharactersWithoutSpaces, countWords } from './text-stats';
+import { countCharacters, countWords } from './text-stats';
 
 describe('countCharacters', () => {
   it.each([
-    ['', 0],
-    ['   ', 3],
-    ['\n\n', 2],
-    ['Hello, world!', 13],
-    ['Привіт', 6],
-  ])('should count %j as %i characters', (text, expected) => {
-    expect(countCharacters(text)).toBe(expected);
+    ['', 0, 0],
+    ['   ', 3, 0],
+    ['\n\n', 2, 0],
+    [' a b\tc\nd ', 9, 4],
+    ['Hello, world!', 13, 12],
+  ])('should count %j (plain ASCII) as %i total, %i without spaces', (text, total, withoutSpaces) => {
+    expect(countCharacters(text)).toEqual({ total, withoutSpaces });
   });
 
-  it('should count an emoji with a skin tone as one character', () => {
-    expect(countCharacters('👍🏽')).toBe(1);
+  it.each([
+    ['Привіт', 6, 6],
+    ['Привіт, світе', 13, 12],
+    ['👍🏽', 1, 1],
+    ['é', 1, 1],
+    ['café au lait', 12, 10],
+    ['a b', 3, 2],
+    ['line\r\nbreak', 10, 9],
+  ])('should count %j (non-ASCII) as %i total, %i without spaces', (text, total, withoutSpaces) => {
+    expect(countCharacters(text)).toEqual({ total, withoutSpaces });
   });
 
-  it('should count a letter with a combining accent as one character', () => {
-    expect(countCharacters('é')).toBe(1);
-  });
-});
-
-describe('countCharactersWithoutSpaces', () => {
-  it('should ignore spaces, tabs and line breaks', () => {
-    expect(countCharactersWithoutSpaces(' a b\tc\nd ')).toBe(4);
-  });
-
-  it('should return 0 when text is only whitespace', () => {
-    expect(countCharactersWithoutSpaces(' \n\t ')).toBe(0);
+  it('should give the same result on the fast and the segmenter path for ASCII text', () => {
+    const ascii = 'Same text, same\tcount!\n';
+    const withEmoji = `${ascii}👍`;
+    expect(countCharacters(withEmoji)).toEqual({
+      total: countCharacters(ascii).total + 1,
+      withoutSpaces: countCharacters(ascii).withoutSpaces + 1,
+    });
   });
 });
 
