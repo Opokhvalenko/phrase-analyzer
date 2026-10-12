@@ -1,4 +1,4 @@
-<section class="panel" aria-labelledby="synonyms-title" [attr.aria-busy]="state().status === 'loading'">
+<section class="panel" aria-labelledby="synonyms-title" [attr.aria-busy]="isLoading()">
   <h2 id="synonyms-title" class="panel__title">{{ text.title }}</h2>
 
   <p
@@ -7,8 +7,19 @@
     role="status"
     data-testid="synonyms-status"
   >
+    @if (isLoading()) {
+      <span class="spinner" aria-hidden="true"></span>
+    }
     {{ statusMessage() }}
   </p>
+
+  @if (isLoading()) {
+    <ul class="panel__list" aria-hidden="true" data-testid="synonyms-skeleton">
+      @for (width of skeletonWidths; track $index) {
+        <li class="skeleton" [style.width.px]="width"></li>
+      }
+    </ul>
+  }
 
   @if (state().status === 'error') {
     <button type="button" class="button" (click)="retry.emit()">{{ text.retry }}</button>
@@ -16,7 +27,7 @@
 
   @if (synonyms().length > 0) {
     <p class="panel__hint" id="synonyms-replace-label">{{ replaceLabel() }}</p>
-    <ul class="panel__list" aria-labelledby="synonyms-replace-label">
+    <ul class="panel__list panel__list--appear" aria-labelledby="synonyms-replace-label">
       @for (synonym of synonyms(); track synonym.text) {
         <li>
           <button type="button" class="chip" (click)="pick.emit(synonym)">{{ synonym.text }}</button>

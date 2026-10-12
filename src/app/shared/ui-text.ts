@@ -1,6 +1,11 @@
 export const UI_TEXT = {
   appTitle: 'Phrase Analyzer',
   appTagline: 'Count words, find synonyms and replace them right in your text.',
+  footer: {
+    dataSource: 'Synonyms by',
+    datamuse: 'Datamuse API',
+    sourceCode: 'Source code on GitHub',
+  },
   editor: {
     label: 'Your text',
     placeholder: 'Type or paste English text, then select a word or phrase…',

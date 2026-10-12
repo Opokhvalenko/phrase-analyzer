@@ -1,14 +1,20 @@
+// Every color pair is checked against WCAG AA in both themes:
+// text ≥ 4.5:1, control borders and focus ring ≥ 3:1 (WCAG 1.4.11).
 :root {
   --color-bg: #f7f7f9;
   --color-surface: #ffffff;
   --color-text: #1d1d22;
   --color-text-muted: #5b5b66;
-  --color-border: #d6d6de;
+  --color-border: #e2e2e8;
+  --color-control-border: #8a8a96;
   --color-accent: #3451d1;
+  --color-accent-hover: #2a43b4;
   --color-accent-soft: #eef1fd;
   --color-accent-contrast: #ffffff;
   --color-error: #b3261e;
   --color-focus: #3451d1;
+  --color-skeleton: #e9e9ef;
+  --shadow-card: 0 1px 2px rgb(16 16 24 / 6%), 0 4px 16px rgb(16 16 24 / 4%);
   --target-size: 44px;
   --radius: 8px;
   --space-1: 4px;
@@ -17,8 +23,28 @@
   --space-4: 24px;
   --space-5: 40px;
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --transition: 150ms ease;
 
-  color-scheme: light;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #121216;
+    --color-surface: #1c1c22;
+    --color-text: #ececf1;
+    --color-text-muted: #a6a6b2;
+    --color-border: #2c2c35;
+    --color-control-border: #757585;
+    --color-accent: #8ea2ff;
+    --color-accent-hover: #a8b6ff;
+    --color-accent-soft: #262d4f;
+    --color-accent-contrast: #10142e;
+    --color-error: #ff8a80;
+    --color-focus: #8ea2ff;
+    --color-skeleton: #2a2a33;
+    --shadow-card: none;
+  }
 }
 
 *,
@@ -35,6 +61,15 @@ body {
   background: var(--color-bg);
 }
 
+a {
+  color: var(--color-accent);
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: var(--color-accent-hover);
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
@@ -45,6 +80,7 @@ body {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
@@ -59,12 +95,17 @@ body {
   font-weight: 600;
   color: var(--color-text);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-control-border);
   border-radius: var(--radius);
   cursor: pointer;
+  transition:
+    background-color var(--transition),
+    border-color var(--transition),
+    color var(--transition);
 
   &:hover:not(:disabled) {
     border-color: var(--color-accent);
+    color: var(--color-accent);
   }
 
   &:disabled {
@@ -76,6 +117,12 @@ body {
     color: var(--color-accent-contrast);
     background: var(--color-accent);
     border-color: var(--color-accent);
+
+    &:hover:not(:disabled) {
+      color: var(--color-accent-contrast);
+      background: var(--color-accent-hover);
+      border-color: var(--color-accent-hover);
+    }
   }
 
   &__shortcut {

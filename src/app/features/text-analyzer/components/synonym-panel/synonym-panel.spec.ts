@@ -41,6 +41,23 @@ describe('SynonymPanel', () => {
     expect(element.querySelector('section')?.getAttribute('aria-busy')).toBe('true');
   });
 
+  it('should show a spinner and placeholder chips, hidden from screen readers, while loading', async () => {
+    await render({ status: 'loading', target: TARGET });
+    const skeleton = element.querySelector('[data-testid="synonyms-skeleton"]');
+    expect(skeleton?.getAttribute('aria-hidden')).toBe('true');
+    expect(skeleton?.querySelectorAll('li').length).toBeGreaterThan(0);
+    expect(element.querySelector('.spinner')?.getAttribute('aria-hidden')).toBe('true');
+    expect(buttons()).toHaveLength(0);
+  });
+
+  it('should remove the loading placeholders once synonyms arrive', async () => {
+    await render({ status: 'loading', target: TARGET });
+    await render({ status: 'success', target: TARGET, synonyms: [{ text: 'glad' }] });
+    expect(element.querySelector('[data-testid="synonyms-skeleton"]')).toBeNull();
+    expect(element.querySelector('.spinner')).toBeNull();
+    expect(element.querySelector('section')?.getAttribute('aria-busy')).toBe('false');
+  });
+
   it('should list synonyms as buttons and say what will be replaced', async () => {
     await render({
       status: 'success',

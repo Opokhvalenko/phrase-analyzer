@@ -15,6 +15,10 @@ export class SynonymPanel {
   readonly retry = output<void>();
 
   protected readonly text = UI_TEXT.synonyms;
+  /** Placeholder chip widths (px) shown while loading, so the layout does not jump. */
+  protected readonly skeletonWidths = [72, 96, 64, 88, 80];
+
+  protected readonly isLoading = computed(() => this.state().status === 'loading');
 
   /** One status line per state, announced politely by screen readers. */
   protected readonly statusMessage = computed(() => {
