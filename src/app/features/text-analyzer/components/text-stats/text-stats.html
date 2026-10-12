@@ -1,12 +1,12 @@
 <dl class="stats">
   <div class="stats__item">
     <dt class="stats__label">{{ labels.characters }}</dt>
-    <dd class="stats__value" data-testid="stat-characters">{{ characters() }}</dd>
+    <dd class="stats__value" data-testid="stat-characters">{{ characters().total }}</dd>
   </div>
   <div class="stats__item">
     <dt class="stats__label">{{ labels.charactersWithoutSpaces }}</dt>
     <dd class="stats__value" data-testid="stat-characters-without-spaces">
-      {{ charactersWithoutSpaces() }}
+      {{ characters().withoutSpaces }}
     </dd>
   </div>
   <div class="stats__item">
