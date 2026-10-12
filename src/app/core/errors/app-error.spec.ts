@@ -43,4 +43,13 @@ describe('isAppError', () => {
   it('should reject objects with an unknown kind', () => {
     expect(isAppError({ kind: 'teapot', message: 'x' })).toBe(false);
   });
+
+  it.each([
+    'toString',
+    'constructor',
+    'hasOwnProperty',
+    '__proto__',
+  ])('should reject a kind inherited from Object.prototype (%s)', (kind) => {
+    expect(isAppError({ kind, message: 'x' })).toBe(false);
+  });
 });
