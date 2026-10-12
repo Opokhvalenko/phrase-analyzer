@@ -23,7 +23,11 @@ export class TextAnalyzerStore {
   private readonly lookups$ = new Subject<TextSelection | null>();
 
   private readonly textSignal = signal('');
-  private readonly rawSelection = signal({ start: 0, end: 0 });
+  /** Selection events fire often (several per keystroke); equal ranges must not trigger recomputation. */
+  private readonly rawSelection = signal(
+    { start: 0, end: 0 },
+    { equal: (a, b) => a.start === b.start && a.end === b.end },
+  );
   private readonly synonymsSignal = signal<SynonymsState>(IDLE);
   private readonly undoSignal = signal<UndoSnapshot | null>(null);
 

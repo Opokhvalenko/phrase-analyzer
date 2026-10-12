@@ -197,8 +197,12 @@ test.describe('Phrase Analyzer', () => {
     );
   });
 
-  test('copies the whole text to the clipboard', async ({ page, context }) => {
-    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  test('copies the whole text to the clipboard', async ({ page, context, browserName }) => {
+    // Only Chromium lets Playwright grant clipboard permissions, so the content is read back there.
+    const canReadClipboard = browserName === 'chromium';
+    if (canReadClipboard) {
+      await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    }
     const copyButton = page.getByRole('button', { name: 'Copy text' });
     await expect(copyButton).toBeDisabled();
 
@@ -206,6 +210,8 @@ test.describe('Phrase Analyzer', () => {
     await copyButton.click();
 
     await expect(page.getByTestId('feedback')).toHaveText('Text copied to the clipboard.');
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('Copy me,\nplease!');
+    if (canReadClipboard) {
+      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('Copy me,\nplease!');
+    }
   });
 });
