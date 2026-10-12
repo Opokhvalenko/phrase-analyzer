@@ -18,6 +18,8 @@ export const UI_TEXT = {
     empty: 'Select a word or phrase in the text to find synonyms.',
     noLetters: 'The selection has no letters. Select a word or phrase.',
     tooLong: (maxWords: number): string => `Select up to ${maxWords} words.`,
+    tooManyCharacters: (maxLength: number): string =>
+      `Select up to ${maxLength} characters — that is a phrase, not a whole passage.`,
     ready: (phrase: string): string => `Ready to find synonyms for “${phrase}”.`,
   },
   stats: {
@@ -33,7 +35,7 @@ export const UI_TEXT = {
     found: (count: number, phrase: string): string =>
       `${count} ${count === 1 ? 'word' : 'words'} found for “${phrase}”.`,
     empty: (phrase: string): string =>
-      `No synonyms found for “${phrase}”. The service supports English only.`,
+      `No synonyms found for “${phrase}”. Try a single word — the service knows English only.`,
     retry: 'Try again',
   },
   feedback: {

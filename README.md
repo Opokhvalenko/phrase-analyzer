@@ -44,7 +44,7 @@ npm start            # http://localhost:4200
 - **Quality:** Biome, husky + lint-staged + commitlint, GitHub Actions (lint → typecheck → unit → build, e2e)
 - **Deploy:** GitHub Pages, only after CI passes on `main`
 
-I kept it to one screen without a router or a state library: for a single page, signals in a small store are enough, and the whole app is ~52 kB gzipped.
+I kept it to one screen without a router or a state library: for a single page, signals in a small store are enough, and the whole app is ~54 kB gzipped.
 
 ## Decisions
 
@@ -56,7 +56,8 @@ The task leaves some cases open. This is how I handled them and why.
 | Unrelated words in results | For phrases Datamuse appends filler results ("very happy" → "agony", "cosmetic"). They start at the first item tagged `results_type:backfill…`, so I cut the list there. This is observed behaviour, not a documented contract: if the tag is missing, the full list is shown. |
 | Selection with spaces or punctuation (`" happy, "`) | Trimmed to the word; the spaces and the comma stay in the text. |
 | Part of a word selected (`app` in `happy`) | Expanded to the whole word, otherwise the replacement would produce `hpleasedy`. |
-| Nothing useful selected | **Find synonyms** is disabled and a hint says why: nothing selected, no letters, or more than 5 words (a phrase, not a paragraph). |
+| Nothing useful selected | **Find synonyms** is disabled and a hint says why: nothing selected, no letters, more than 5 words or more than 100 characters (a phrase, not a paragraph or a pasted URL). |
+| Queries Datamuse rejects | I measured that Datamuse answers 403 when the URL-encoded query is longer than 190 characters. Cyrillic letters take 6 encoded characters each, so even a 5-word Ukrainian phrase hits it. The client doesn't send such queries and shows "No synonyms found" instead of an error that **Try again** could never fix. |
 | Text or selection changes after the lookup | The replacement target is captured when the lookup starts. Editing the text clears the synonyms and cancels the request, so a synonym can never land in the wrong place. |
 | Ctrl+Z after a replacement | Setting `textarea.value` from code clears the browser's undo history, so there is an **Undo** button for the last replacement. `document.execCommand('insertText')` would keep native undo, but it is deprecated and isn't implemented in jsdom, so it can't be covered by unit tests. |
 | What is a "character" | A user-perceived character: 👍🏽 and `é` count as 1 (`Intl.Segmenter`). Selection offsets stay in UTF-16 units, the same as `selectionStart/End`. |
@@ -83,7 +84,7 @@ e2e/                        Playwright tests, Datamuse mocked with page.route
 
 ## Tests
 
-- **145 unit and component tests.** Text helpers cover the edge cases above (empty text, emoji, Ukrainian, backwards selection, the 5-word limit). The API client is tested with `HttpTestingController` (encoding, cache, every error type, timeout). The store is tested with a fake client to check cancellation, double clicks, retry, replace and undo.
+- **156 unit and component tests.** Text helpers cover the edge cases above (empty text, emoji, Ukrainian, backwards selection, the 5-word and 100-character limits). The API client is tested with `HttpTestingController` (encoding, cache, every error type, timeout). The store is tested with a fake client to check cancellation, double clicks, retry, replace and undo.
 - **11 e2e tests, each run in Chromium, Firefox and WebKit** with the API mocked. Text is selected with Shift+Arrow keys, like a user would. Running all three engines paid off: Firefox collapses a selection only after `mouseup`, so the app also listens to `selectionchange` on the textarea.
 - I checked that the tests fail when the logic breaks: I temporarily broke key lines (`switchMap` → `mergeMap`, no cache, no selection listeners…) and each change made at least one test fail.
 

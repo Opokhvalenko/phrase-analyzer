@@ -77,8 +77,9 @@ test.describe('Phrase Analyzer', () => {
     await selectByKeyboard(editor, 'Happy');
     await findButton.click();
 
-    expect(phrases).toEqual(['happy']);
+    // The request is async: assert after the result is on screen, not right after the click.
     await expect(page.getByText('Replace “Happy” with:')).toBeVisible();
+    expect(phrases).toEqual(['happy']);
 
     await page.getByRole('button', { name: 'pleased' }).click();
 
@@ -157,7 +158,7 @@ test.describe('Phrase Analyzer', () => {
     await findButton.click();
 
     await expect(page.getByTestId('synonyms-status')).toHaveText(
-      'No synonyms found for “Привіт”. The service supports English only.',
+      'No synonyms found for “Привіт”. Try a single word — the service knows English only.',
     );
   });
 
