@@ -10,10 +10,17 @@ import { toSynonyms } from './datamuse.mapper';
 export const DATAMUSE_WORDS_URL = 'https://api.datamuse.com/words';
 export const MAX_SYNONYMS = 20;
 export const REQUEST_TIMEOUT_MS = 8000;
+/**
+ * Datamuse answers 403 when the URL-encoded `ml` value is longer than this (measured: 190 → 200, 191 → 403).
+ * Non-Latin letters take 6 encoded characters each, so a 5-word Ukrainian phrase can already exceed it.
+ * Datamuse has no results for such text anyway, so the request is skipped instead of failing.
+ */
+export const MAX_ENCODED_QUERY_LENGTH = 190;
 
 /**
  * Looks up words with a similar meaning (`ml=`), which works for single words and phrases.
  * Successful results are cached per normalized phrase; errors are never cached, so Retry hits the network.
+ * Queries Datamuse would reject as too long are not sent and give an empty list.
  * Errors are emitted as `AppError`.
  */
 @Injectable({ providedIn: 'root' })
@@ -26,6 +33,9 @@ export class DatamuseClient {
     const cached = this.cache.get(key);
     if (cached) {
       return of(cached);
+    }
+    if (encodeURIComponent(key).length > MAX_ENCODED_QUERY_LENGTH) {
+      return of([]);
     }
 
     const params = new HttpParams().set('ml', key).set('max', MAX_SYNONYMS);

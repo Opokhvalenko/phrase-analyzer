@@ -1,5 +1,11 @@
 import type { TextSelection } from './selection';
-import { applyReplacement, MAX_PHRASE_WORDS, matchCase, normalizeSelection } from './selection';
+import {
+  applyReplacement,
+  MAX_PHRASE_LENGTH,
+  MAX_PHRASE_WORDS,
+  matchCase,
+  normalizeSelection,
+} from './selection';
 
 /** Selects `fragment` (its first occurrence) inside `text`, like a user would. */
 function select(text: string, fragment: string): [number, number] {
@@ -96,6 +102,34 @@ describe('normalizeSelection', () => {
   it(`should be invalid with reason "too-long" when more than ${MAX_PHRASE_WORDS} words are selected`, () => {
     const text = 'one two three four five six';
     expect(normalizeSelection(text, 0, text.length)).toEqual({ valid: false, reason: 'too-long' });
+  });
+
+  it(`should accept a phrase of exactly ${MAX_PHRASE_LENGTH} characters`, () => {
+    const text = 'a'.repeat(MAX_PHRASE_LENGTH);
+    expect(normalizeSelection(text, 0, text.length).valid).toBe(true);
+  });
+
+  it('should accept five long words (a real phrase of 83 characters)', () => {
+    const text =
+      'extraordinarily overwhelming responsibilities internationalization misunderstanding';
+    expect(normalizeSelection(text, 0, text.length).valid).toBe(true);
+  });
+
+  it('should measure the length after collapsing whitespace, as it is sent to the API', () => {
+    const text = `very${' '.repeat(MAX_PHRASE_LENGTH)}happy`;
+    expect(normalizeSelection(text, 0, text.length)).toMatchObject({
+      valid: true,
+      selection: { text },
+    });
+  });
+
+  it(`should be invalid with reason "too-many-characters" when one word is longer than ${MAX_PHRASE_LENGTH} characters`, () => {
+    const text = `see ${'a'.repeat(MAX_PHRASE_LENGTH + 1)} here`;
+    const [start, end] = select(text, 'a'.repeat(MAX_PHRASE_LENGTH + 1));
+    expect(normalizeSelection(text, start, end)).toEqual({
+      valid: false,
+      reason: 'too-many-characters',
+    });
   });
 
   it('should handle a backwards selection (start > end)', () => {

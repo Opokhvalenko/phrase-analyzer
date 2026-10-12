@@ -6,7 +6,7 @@ import { DatamuseClient } from '../../core/api/datamuse/datamuse.client';
 import { ClipboardService } from '../../core/clipboard/clipboard.service';
 import type { AppError } from '../../core/errors/app-error';
 import type { Synonym } from '../../shared/models/synonym';
-import { MAX_PHRASE_WORDS } from '../../shared/text/selection';
+import { MAX_PHRASE_LENGTH, MAX_PHRASE_WORDS } from '../../shared/text/selection';
 import { UI_TEXT } from '../../shared/ui-text';
 import { FEEDBACK_DURATION_MS, TextAnalyzerPage } from './text-analyzer.page';
 
@@ -81,6 +81,16 @@ describe('TextAnalyzerPage', () => {
     await select('one two three four five six');
     expect(findButton().disabled).toBe(true);
     expect(textOf('selection-hint')).toBe(UI_TEXT.selectionHint.tooLong(MAX_PHRASE_WORDS));
+  });
+
+  it('should explain why a selection with too many characters cannot be looked up', async () => {
+    const pasted = 'x'.repeat(MAX_PHRASE_LENGTH + 1);
+    await type(`see ${pasted}`);
+    await select(pasted);
+    expect(findButton().disabled).toBe(true);
+    expect(textOf('selection-hint')).toBe(
+      UI_TEXT.selectionHint.tooManyCharacters(MAX_PHRASE_LENGTH),
+    );
   });
 
   it('should update the counters while typing', async () => {

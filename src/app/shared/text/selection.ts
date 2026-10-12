@@ -1,6 +1,13 @@
+import { normalizePhrase } from './normalize-phrase';
 import { LETTER_PATTERN, WORD_PATTERN } from './word-pattern';
 
 export const MAX_PHRASE_WORDS = 5;
+/**
+ * Even five long words fit ("extraordinarily overwhelming responsibilities…" is 83);
+ * a longer run is pasted data (a URL, a hash), not a phrase.
+ * Counted on the normalized phrase — the text that is actually sent to the API.
+ */
+export const MAX_PHRASE_LENGTH = 100;
 
 /** Offsets are UTF-16 indices, the same units as `textarea.selectionStart/End`. */
 export interface TextSelection {
@@ -9,7 +16,7 @@ export interface TextSelection {
   readonly text: string;
 }
 
-export type InvalidSelectionReason = 'empty' | 'no-letters' | 'too-long';
+export type InvalidSelectionReason = 'empty' | 'no-letters' | 'too-long' | 'too-many-characters';
 
 export type SelectionCheck =
   | { readonly valid: true; readonly selection: TextSelection }
@@ -55,6 +62,9 @@ export function normalizeSelection(text: string, start: number, end: number): Se
   }
   if (touchedWords.length > MAX_PHRASE_WORDS) {
     return { valid: false, reason: 'too-long' };
+  }
+  if (normalizePhrase(phrase).length > MAX_PHRASE_LENGTH) {
+    return { valid: false, reason: 'too-many-characters' };
   }
 
   return { valid: true, selection: { start: selectionStart, end: selectionEnd, text: phrase } };

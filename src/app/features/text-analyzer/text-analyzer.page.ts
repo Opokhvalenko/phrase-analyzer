@@ -13,7 +13,7 @@ import {
 import { ClipboardService } from '../../core/clipboard/clipboard.service';
 import type { Synonym } from '../../shared/models/synonym';
 import type { TextSelection } from '../../shared/text/selection';
-import { MAX_PHRASE_WORDS } from '../../shared/text/selection';
+import { MAX_PHRASE_LENGTH, MAX_PHRASE_WORDS } from '../../shared/text/selection';
 import { UI_TEXT } from '../../shared/ui-text';
 import { SynonymPanel } from './components/synonym-panel/synonym-panel';
 import { TextStats } from './components/text-stats/text-stats';
@@ -54,6 +54,8 @@ export class TextAnalyzerPage {
         return UI_TEXT.selectionHint.noLetters;
       case 'too-long':
         return UI_TEXT.selectionHint.tooLong(MAX_PHRASE_WORDS);
+      case 'too-many-characters':
+        return UI_TEXT.selectionHint.tooManyCharacters(MAX_PHRASE_LENGTH);
     }
   });
 

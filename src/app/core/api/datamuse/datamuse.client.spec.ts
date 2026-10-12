@@ -6,6 +6,7 @@ import type { AppError } from '../../errors/app-error';
 import {
   DATAMUSE_WORDS_URL,
   DatamuseClient,
+  MAX_ENCODED_QUERY_LENGTH,
   MAX_SYNONYMS,
   REQUEST_TIMEOUT_MS,
 } from './datamuse.client';
@@ -71,6 +72,24 @@ describe('DatamuseClient', () => {
     const request = expectLookup('rock & roll #1');
     expect(request.request.urlWithParams).toContain('ml=rock%20%26%20roll%20%231');
     request.flush([]);
+  });
+
+  it('should send a query whose encoded length is exactly at the Datamuse limit', () => {
+    const phrase = 'a'.repeat(MAX_ENCODED_QUERY_LENGTH);
+    collect(phrase);
+    expectLookup(phrase).flush([]);
+  });
+
+  it('should not send a query Datamuse would reject as too long and return no synonyms', () => {
+    const outcome = collect('a'.repeat(MAX_ENCODED_QUERY_LENGTH + 1));
+    http.expectNone(() => true);
+    expect(outcome).toEqual({ result: [], error: null });
+  });
+
+  it('should not send a five-word Ukrainian phrase whose encoded form is too long (measured: 403)', () => {
+    const outcome = collect('дуже щасливий сьогодні вранці друже');
+    http.expectNone(() => true);
+    expect(outcome.result).toEqual([]);
   });
 
   it('should serve a repeated lookup from the cache, ignoring case and spacing', () => {
