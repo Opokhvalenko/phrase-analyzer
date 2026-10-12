@@ -1,0 +1,4 @@
+export CI=true
+export NG_CLI_ANALYTICS=false
+
+npm run check:ci && npm run typecheck && npm test && npm run build
