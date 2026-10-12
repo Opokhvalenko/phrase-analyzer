@@ -13,7 +13,7 @@ export const SOURCE_CODE_URL = 'https://github.com/Opokhvalenko/phrase-analyzer'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  protected readonly text = UI_TEXT;
+  protected readonly ui = UI_TEXT;
   protected readonly datamuseUrl = DATAMUSE_HOME_URL;
   protected readonly sourceCodeUrl = SOURCE_CODE_URL;
 }

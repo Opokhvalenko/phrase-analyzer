@@ -35,7 +35,7 @@ export class TextAnalyzerPage {
   private readonly injector = inject(Injector);
   private readonly textarea = viewChild.required<ElementRef<HTMLTextAreaElement>>('editor');
 
-  protected readonly text = UI_TEXT.editor;
+  protected readonly labels = UI_TEXT.editor;
   protected readonly feedback = signal('');
   private feedbackTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -52,8 +52,8 @@ export class TextAnalyzerPage {
         return UI_TEXT.selectionHint.empty;
       case 'no-letters':
         return UI_TEXT.selectionHint.noLetters;
-      case 'too-long':
-        return UI_TEXT.selectionHint.tooLong(MAX_PHRASE_WORDS);
+      case 'too-many-words':
+        return UI_TEXT.selectionHint.tooManyWords(MAX_PHRASE_WORDS);
       case 'too-many-characters':
         return UI_TEXT.selectionHint.tooManyCharacters(MAX_PHRASE_LENGTH);
     }

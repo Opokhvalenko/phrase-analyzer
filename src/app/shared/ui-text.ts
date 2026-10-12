@@ -17,7 +17,7 @@ export const UI_TEXT = {
   selectionHint: {
     empty: 'Select a word or phrase in the text to find synonyms.',
     noLetters: 'The selection has no letters. Select a word or phrase.',
-    tooLong: (maxWords: number): string => `Select up to ${maxWords} words.`,
+    tooManyWords: (maxWords: number): string => `Select up to ${maxWords} words.`,
     tooManyCharacters: (maxLength: number): string =>
       `Select up to ${maxLength} characters — that is a phrase, not a whole passage.`,
     ready: (phrase: string): string => `Ready to find synonyms for “${phrase}”.`,

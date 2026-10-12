@@ -14,7 +14,7 @@ export class SynonymPanel {
   readonly pick = output<Synonym>();
   readonly retry = output<void>();
 
-  protected readonly text = UI_TEXT.synonyms;
+  protected readonly labels = UI_TEXT.synonyms;
   /** Placeholder chip widths (px) shown while loading, so the layout does not jump. */
   protected readonly skeletonWidths = [72, 96, 64, 88, 80];
 
@@ -25,15 +25,15 @@ export class SynonymPanel {
     const state = this.state();
     switch (state.status) {
       case 'idle':
-        return this.text.idle;
+        return this.labels.idle;
       case 'loading':
-        return this.text.loading(state.target.text);
+        return this.labels.loading(state.target.text);
       case 'error':
         return state.error.message;
       case 'success':
         return state.synonyms.length > 0
-          ? this.text.found(state.synonyms.length, state.target.text)
-          : this.text.empty(state.target.text);
+          ? this.labels.found(state.synonyms.length, state.target.text)
+          : this.labels.empty(state.target.text);
     }
   });
 
@@ -44,6 +44,6 @@ export class SynonymPanel {
 
   protected readonly replaceLabel = computed(() => {
     const state = this.state();
-    return state.status === 'success' ? this.text.replaceWith(state.target.text) : '';
+    return state.status === 'success' ? this.labels.replaceWith(state.target.text) : '';
   });
 }

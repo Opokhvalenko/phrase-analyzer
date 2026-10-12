@@ -1,5 +1,5 @@
 <section class="panel" aria-labelledby="synonyms-title" [attr.aria-busy]="isLoading()">
-  <h2 id="synonyms-title" class="panel__title">{{ text.title }}</h2>
+  <h2 id="synonyms-title" class="panel__title">{{ labels.title }}</h2>
 
   <p
     class="panel__status"
@@ -22,7 +22,7 @@
   }
 
   @if (state().status === 'error') {
-    <button type="button" class="button" (click)="retry.emit()">{{ text.retry }}</button>
+    <button type="button" class="button" (click)="retry.emit()">{{ labels.retry }}</button>
   }
 
   @if (synonyms().length > 0) {
