@@ -22,4 +22,11 @@ describe('App', () => {
     expect(headings).toHaveLength(1);
     expect(headings[0]?.textContent).toContain(UI_TEXT.appTitle);
   });
+
+  it('should render the analyzer page inside main', async () => {
+    const fixture = TestBed.createComponent(App);
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('main app-text-analyzer-page')).not.toBeNull();
+  });
 });
