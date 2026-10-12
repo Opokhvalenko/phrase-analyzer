@@ -6,3 +6,11 @@
 <main class="app-main">
   <app-text-analyzer-page />
 </main>
+
+<footer class="app-footer">
+  <p class="app-footer__line">
+    <span>{{ text.footer.dataSource }} <a [href]="datamuseUrl">{{ text.footer.datamuse }}</a></span>
+    <span class="app-footer__separator" aria-hidden="true">·</span>
+    <a [href]="sourceCodeUrl">{{ text.footer.sourceCode }}</a>
+  </p>
+</footer>
